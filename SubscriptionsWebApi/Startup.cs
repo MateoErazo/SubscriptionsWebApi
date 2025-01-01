@@ -141,11 +141,7 @@ namespace SubscriptionsWebApi
             {
                 options.AddDefaultPolicy(builder =>
                 {
-                    builder.WithOrigins(new string[]
-                    {
-                        ""
-                    }).AllowAnyMethod().AllowAnyHeader()
-                    .WithExposedHeaders(new string[] { "totalRecords" });
+                  builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
                 });
             });
 
