@@ -9,6 +9,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using SubscriptionsWebApi.Enums;
 
 namespace SubscriptionsWebApi.Controllers.V1
 {
@@ -20,16 +21,19 @@ namespace SubscriptionsWebApi.Controllers.V1
     private readonly UserManager<IdentityUser> userManager;
     private readonly SignInManager<IdentityUser> signInManager;
     private readonly IConfiguration configuration;
+    private readonly KeysService keysService;
 
     public AccountsController(
         UserManager<IdentityUser> userManager,
         SignInManager<IdentityUser> signInManager,
-        IConfiguration configuration
+        IConfiguration configuration,
+        KeysService keysService
         )
     {
       this.userManager = userManager;
       this.signInManager = signInManager;
       this.configuration = configuration;
+      this.keysService = keysService;
     }
 
     /// <summary>
@@ -51,6 +55,7 @@ namespace SubscriptionsWebApi.Controllers.V1
 
       if (creationResult.Succeeded)
       {
+        await keysService.CreateKey(user.Id, KeyType.Free);
         return await BuildToken(userCredentials, user.Id);
       }
       else
