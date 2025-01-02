@@ -55,7 +55,7 @@ namespace SubscriptionsWebApi.Controllers.V1
 
       if (creationResult.Succeeded)
       {
-        await keysService.CreateKey(user.Id, KeyType.Free);
+        await keysService.CreateKeyAsync(user.Id, KeyType.Free);
         return await BuildToken(userCredentials, user.Id);
       }
       else

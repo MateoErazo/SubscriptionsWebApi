@@ -12,9 +12,9 @@ namespace SubscriptionsWebApi.Services
       this.dbContext = dbContext;
     }
 
-    public async Task CreateKey(string userId, KeyType keyType)
+    public async Task CreateKeyAsync(string userId, KeyType keyType)
     {
-      string key = Guid.NewGuid().ToString().Replace("-","");
+      string key = GenerateKey();
 
       APIKey apiKey = new APIKey()
       {
@@ -26,6 +26,11 @@ namespace SubscriptionsWebApi.Services
 
       dbContext.Add(apiKey);
       await dbContext.SaveChangesAsync();
+    }
+
+    public string GenerateKey()
+    {
+      return Guid.NewGuid().ToString().Replace("-", "");
     }
   }
 }
