@@ -13,6 +13,7 @@ using Microsoft.OpenApi.Models;
 using System.Reflection;
 using System.Text;
 using System.Text.Json.Serialization;
+using SubscriptionsWebApi.Middlewares;
 
 [assembly: ApiConventionType(typeof(DefaultApiConventions))]
 namespace SubscriptionsWebApi
@@ -189,6 +190,8 @@ namespace SubscriptionsWebApi
       app.UseRouting();
 
       app.UseCors();
+
+      app.UseLimitRequests();
 
       app.UseAuthorization();
 
