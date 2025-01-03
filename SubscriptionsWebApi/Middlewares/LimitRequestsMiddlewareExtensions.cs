@@ -113,7 +113,27 @@ namespace SubscriptionsWebApi.Middlewares
         return true;
       }
 
-      return RequestApprovesDomainRestrictions(apiKey.DomainRestrictions, httpContext);
+      bool requestApprovesDomainRestrictions = RequestApprovesDomainRestrictions(apiKey.DomainRestrictions, httpContext);
+      bool requestApprovesIPRestrictions = RequestApprovesIPRestrictions(apiKey.IPRestrictions, httpContext);
+
+      return requestApprovesDomainRestrictions || requestApprovesIPRestrictions;
+    }
+
+    private bool RequestApprovesIPRestrictions(List<IPRestriction> IPRestrictions, 
+      HttpContext httpContext)
+    {
+      if (IPRestrictions == null || IPRestrictions.Count == 0)
+      {
+        return false;
+      }
+
+      string IP = httpContext.Connection.RemoteIpAddress.ToString();
+
+      if (IP == string.Empty) {
+        return false;
+      }
+
+      return IPRestrictions.Any(x => x.IP == IP);
     }
 
     private bool RequestApprovesDomainRestrictions(List<DomainRestriction> domainRestrictions,
