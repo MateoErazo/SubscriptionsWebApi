@@ -30,6 +30,13 @@ namespace SubscriptionsWebApi.Middlewares
       var limitRequestsConfig = new LimitRequestsConfigurationDTO();
       configuration.GetRequiredSection("LimitRequests").Bind(limitRequestsConfig);
 
+      var path = httpContext.Request.Path.ToString();
+      bool pathIsInWhitelist = limitRequestsConfig.WhitelistRoutes.Any(x => path.Contains(x));
+      if (pathIsInWhitelist) {
+        await next(httpContext);
+        return;
+      }
+
       var keyStringValues = httpContext.Request.Headers["X-Api-Key"];
       if (keyStringValues.Count == 0)
       {
