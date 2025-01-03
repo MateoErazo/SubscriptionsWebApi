@@ -32,7 +32,10 @@ namespace SubscriptionsWebApi.Controllers.V1
     public async Task<List<APIKeyDTO>> GetAll()
     {
       string userId = GetUserId();
-      List<APIKey> keys = await dbContext.APIKeys.Where(x => x.UserId == userId).ToListAsync();
+      List<APIKey> keys = await dbContext.APIKeys
+        .Include(x => x.DomainRestrictions)
+        .Include(x => x.IPRestrictions)
+        .Where(x => x.UserId == userId).ToListAsync();
       return mapper.Map<List<APIKeyDTO>>(keys);
     }
 
