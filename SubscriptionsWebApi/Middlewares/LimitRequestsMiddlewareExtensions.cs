@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore.Query.Internal;
 using SubscriptionsWebApi.DTOs;
 using SubscriptionsWebApi.Entities;
 using System.Data;
+using static System.Net.WebRequestMethods;
 
 namespace SubscriptionsWebApi.Middlewares
 {
@@ -54,7 +55,10 @@ namespace SubscriptionsWebApi.Middlewares
 
       string apiKey = keyStringValues[0];
 
-      APIKey apiKeyDb = await dbContext.APIKeys.FirstOrDefaultAsync(x => x.Key == apiKey);
+      APIKey apiKeyDb = await dbContext.APIKeys
+        .Include(x => x.DomainRestrictions)
+        .Include(x => x.IPRestrictions)
+        .FirstOrDefaultAsync(x => x.Key == apiKey);
       
       if (apiKeyDb == null) {
         httpContext.Response.StatusCode = 400;
@@ -87,11 +91,49 @@ namespace SubscriptionsWebApi.Middlewares
         }
       }
 
+      bool approveRestrictions = RequestApprovesAnyOfTheRestrictions(apiKeyDb,httpContext);
+      if (!approveRestrictions)
+      {
+        httpContext.Response.StatusCode = 403;
+        return;
+      }
+
+
       var request = new Request() { APIKeyId = apiKeyDb.Id, RequestDate = DateTime.UtcNow };
       dbContext.Add(request);
       await dbContext.SaveChangesAsync();
-
       await next(httpContext);
+    }
+
+    private bool RequestApprovesAnyOfTheRestrictions(APIKey apiKey, HttpContext httpContext)
+    {
+      bool existAnyRestriction = apiKey.DomainRestrictions.Any() || apiKey.IPRestrictions.Any();
+
+      if (!existAnyRestriction) {
+        return true;
+      }
+
+      return RequestApprovesDomainRestrictions(apiKey.DomainRestrictions, httpContext);
+    }
+
+    private bool RequestApprovesDomainRestrictions(List<DomainRestriction> domainRestrictions,
+      HttpContext httpContext)
+    {
+      if (domainRestrictions == null || domainRestrictions.Count == 0)
+      {
+        return false;
+      }
+
+      string referer = httpContext.Request.Headers["Referer"].ToString();
+
+      if (referer == string.Empty) {
+        return false;
+      }
+
+      Uri myUri = new Uri(referer);
+      string host = myUri.Host;
+
+      return domainRestrictions.Any(x => x.Domain == host);
     }
   }
 }

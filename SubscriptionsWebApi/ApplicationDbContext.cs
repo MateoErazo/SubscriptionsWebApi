@@ -24,6 +24,8 @@ namespace SubscriptionsWebApi
 
     public DbSet<APIKey> APIKeys { get; set; }
     public DbSet<Request> Requests { get; set; }
+    public DbSet<DomainRestriction> DomainRestrictions { get; set; }
+    public DbSet<IPRestriction> IPRestrictions { get; set; }
 
   }
 }
