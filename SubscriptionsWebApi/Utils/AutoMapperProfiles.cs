@@ -29,6 +29,8 @@ namespace SubscriptionsWebApi.Utils
       CreateMap<Comment, CommentWithBookDTO>();
 
       CreateMap<APIKey, APIKeyDTO>();
+      CreateMap<DomainRestriction, DomainRestrictionDTO>();
+      CreateMap<IPRestriction, IPRestrictionDTO>();
     }
 
     private List<BookDTO> MapAuthorBooks(Author author, AuthorWithBooksDTO authorWithBooksDTO)
