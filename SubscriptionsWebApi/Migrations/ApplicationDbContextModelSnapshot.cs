@@ -332,6 +332,27 @@ namespace SubscriptionsWebApi.Migrations
                     b.ToTable("Comments");
                 });
 
+            modelBuilder.Entity("SubscriptionsWebApi.Entities.Request", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("APIKeyId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("RequestDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("APIKeyId");
+
+                    b.ToTable("Requests");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -426,6 +447,17 @@ namespace SubscriptionsWebApi.Migrations
                     b.Navigation("Book");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("SubscriptionsWebApi.Entities.Request", b =>
+                {
+                    b.HasOne("SubscriptionsWebApi.Entities.APIKey", "APIKey")
+                        .WithMany()
+                        .HasForeignKey("APIKeyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("APIKey");
                 });
 
             modelBuilder.Entity("SubscriptionsWebApi.Entities.Author", b =>

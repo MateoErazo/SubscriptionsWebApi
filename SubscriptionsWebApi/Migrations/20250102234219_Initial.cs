@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace SubscriptionsWebApi.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialSubscriptionsWebAPI : Migration
+    public partial class Initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -255,6 +255,26 @@ namespace SubscriptionsWebApi.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Requests",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    APIKeyId = table.Column<int>(type: "int", nullable: false),
+                    RequestDate = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Requests", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Requests_APIKeys_APIKeyId",
+                        column: x => x.APIKeyId,
+                        principalTable: "APIKeys",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_APIKeys_UserId",
                 table: "APIKeys",
@@ -313,14 +333,16 @@ namespace SubscriptionsWebApi.Migrations
                 name: "IX_Comments_UserId",
                 table: "Comments",
                 column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Requests_APIKeyId",
+                table: "Requests",
+                column: "APIKeyId");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "APIKeys");
-
             migrationBuilder.DropTable(
                 name: "AspNetRoleClaims");
 
@@ -343,16 +365,22 @@ namespace SubscriptionsWebApi.Migrations
                 name: "Comments");
 
             migrationBuilder.DropTable(
+                name: "Requests");
+
+            migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
                 name: "Authors");
 
             migrationBuilder.DropTable(
-                name: "AspNetUsers");
+                name: "Books");
 
             migrationBuilder.DropTable(
-                name: "Books");
+                name: "APIKeys");
+
+            migrationBuilder.DropTable(
+                name: "AspNetUsers");
         }
     }
 }

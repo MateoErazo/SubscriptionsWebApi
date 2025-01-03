@@ -23,6 +23,7 @@ namespace SubscriptionsWebApi
     public DbSet<BookAuthor> BookAuthor { get; set; }
 
     public DbSet<APIKey> APIKeys { get; set; }
+    public DbSet<Request> Requests { get; set; }
 
   }
 }
