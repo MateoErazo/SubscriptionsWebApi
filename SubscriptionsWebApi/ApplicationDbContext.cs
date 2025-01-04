@@ -15,6 +15,7 @@ namespace SubscriptionsWebApi
       base.OnModelCreating(modelBuilder);
       modelBuilder.Entity<BookAuthor>()
           .HasKey(ba => new { ba.BookId, ba.AuthorId });
+      modelBuilder.Entity<Invoice>().Property(x => x.Amount).HasColumnType("decimal(18,2)");
     }
 
     public DbSet<Author> Authors { get; set; }
@@ -26,6 +27,8 @@ namespace SubscriptionsWebApi
     public DbSet<Request> Requests { get; set; }
     public DbSet<DomainRestriction> DomainRestrictions { get; set; }
     public DbSet<IPRestriction> IPRestrictions { get; set; }
+    public DbSet<Invoice> Invoices { get; set; }
+    public DbSet<IssuedInvoice> IssuedInvoices { get; set; }
 
   }
 }
