@@ -18,12 +18,12 @@ namespace SubscriptionsWebApi.Controllers.V1
     {
         private readonly ApplicationDbContext dbContext;
         private readonly IMapper mapper;
-        private readonly UserManager<IdentityUser> userManager;
+        private readonly UserManager<User> userManager;
 
         public CommentsController(
             ApplicationDbContext dbContext,
             IMapper mapper,
-            UserManager<IdentityUser> userManager)
+            UserManager<User> userManager)
         {
             this.dbContext = dbContext;
             this.mapper = mapper;
@@ -82,7 +82,7 @@ namespace SubscriptionsWebApi.Controllers.V1
             Claim emailClaim = HttpContext.User.Claims.Where(x => x.Type == "email").FirstOrDefault();
             string email = emailClaim.Value;
 
-            IdentityUser user = await userManager.FindByEmailAsync(email);
+            User user = await userManager.FindByEmailAsync(email);
             string userId = user.Id;
 
             Comment comment = mapper.Map<Comment>(commentCreationDTO);
