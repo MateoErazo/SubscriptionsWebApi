@@ -13,7 +13,7 @@ namespace SubscriptionsWebApi.Entities
 
     public bool IsActive { get; set; }
     public string UserId { get; set; }
-    public IdentityUser User { get; set; }
+    public User User { get; set; }
     public List<DomainRestriction> DomainRestrictions { get; set; }
     public List<IPRestriction> IPRestrictions { get; set; }
   }

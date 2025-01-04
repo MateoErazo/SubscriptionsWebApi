@@ -10,6 +10,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using SubscriptionsWebApi.Enums;
+using SubscriptionsWebApi.Entities;
 
 namespace SubscriptionsWebApi.Controllers.V1
 {
@@ -18,14 +19,14 @@ namespace SubscriptionsWebApi.Controllers.V1
   [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "IsAdmin")]
   public class AccountsController : ControllerBase
   {
-    private readonly UserManager<IdentityUser> userManager;
-    private readonly SignInManager<IdentityUser> signInManager;
+    private readonly UserManager<User> userManager;
+    private readonly SignInManager<User> signInManager;
     private readonly IConfiguration configuration;
     private readonly KeysService keysService;
 
     public AccountsController(
-        UserManager<IdentityUser> userManager,
-        SignInManager<IdentityUser> signInManager,
+        UserManager<User> userManager,
+        SignInManager<User> signInManager,
         IConfiguration configuration,
         KeysService keysService
         )
@@ -45,7 +46,7 @@ namespace SubscriptionsWebApi.Controllers.V1
     [HttpPost("create", Name = "createAccountV1")]
     public async Task<ActionResult<AccountCreationResponseDTO>> Create(UserCredentialsDTO userCredentials)
     {
-      IdentityUser user = new IdentityUser()
+      User user = new User()
       {
         UserName = userCredentials.Email,
         Email = userCredentials.Email
@@ -80,7 +81,7 @@ namespace SubscriptionsWebApi.Controllers.V1
 
       if (result.Succeeded)
       {
-        IdentityUser user = await userManager.FindByEmailAsync(userCredentialsDTO.Email);
+        User user = await userManager.FindByEmailAsync(userCredentialsDTO.Email);
         return await BuildToken(userCredentialsDTO, user.Id);
       }
 
@@ -115,7 +116,7 @@ namespace SubscriptionsWebApi.Controllers.V1
                 new Claim("id",userId)
             };
 
-      IdentityUser user = await userManager.FindByEmailAsync(userCredentials.Email);
+      User user = await userManager.FindByEmailAsync(userCredentials.Email);
       var claimsDb = await userManager.GetClaimsAsync(user);
       claims.AddRange(claimsDb);
 
@@ -138,7 +139,7 @@ namespace SubscriptionsWebApi.Controllers.V1
     [HttpPost("set-admin", Name = "createAdminV1")]
     public async Task<ActionResult> SetAdmin(UserAdminEditDTO userAdminEditDTO)
     {
-      IdentityUser user = await userManager.FindByEmailAsync(userAdminEditDTO.Email);
+      User user = await userManager.FindByEmailAsync(userAdminEditDTO.Email);
 
       if (user == null)
       {
@@ -152,7 +153,7 @@ namespace SubscriptionsWebApi.Controllers.V1
     [HttpPost("remove-admin", Name = "deleteAdminV1")]
     public async Task<ActionResult> DeleteAdmin(UserAdminEditDTO userAdminEditDTO)
     {
-      IdentityUser user = await userManager.FindByEmailAsync(userAdminEditDTO.Email);
+      User user = await userManager.FindByEmailAsync(userAdminEditDTO.Email);
 
       if (user == null)
       {

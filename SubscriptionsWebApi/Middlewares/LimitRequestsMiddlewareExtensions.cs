@@ -58,6 +58,7 @@ namespace SubscriptionsWebApi.Middlewares
       APIKey apiKeyDb = await dbContext.APIKeys
         .Include(x => x.DomainRestrictions)
         .Include(x => x.IPRestrictions)
+        .Include(x => x.User)
         .FirstOrDefaultAsync(x => x.Key == apiKey);
       
       if (apiKeyDb == null) {
@@ -89,6 +90,11 @@ namespace SubscriptionsWebApi.Middlewares
           await httpContext.Response.WriteAsync("You have exceeded the limit of requests per day. If you want to make more requests today, update you subscription to professional account.");
           return;
         }
+      }else if (apiKeyDb.User.NonPayingUser)
+      {
+        httpContext.Response.StatusCode = 400;
+        await httpContext.Response.WriteAsync("Sorry, you have outstanding invoices that have not been paid. Please make the pending payments to continue.");
+        return;
       }
 
       bool approveRestrictions = RequestApprovesAnyOfTheRestrictions(apiKeyDb,httpContext);

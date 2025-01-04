@@ -14,6 +14,7 @@ using System.Reflection;
 using System.Text;
 using System.Text.Json.Serialization;
 using SubscriptionsWebApi.Middlewares;
+using SubscriptionsWebApi.Entities;
 
 [assembly: ApiConventionType(typeof(DefaultApiConventions))]
 namespace SubscriptionsWebApi
@@ -129,7 +130,7 @@ namespace SubscriptionsWebApi
         c.IncludeXmlComments(xmlPath);
       });
 
-      services.AddIdentity<IdentityUser, IdentityRole>()
+      services.AddIdentity<User, IdentityRole>()
           .AddEntityFrameworkStores<ApplicationDbContext>()
           .AddDefaultTokenProviders();
 
