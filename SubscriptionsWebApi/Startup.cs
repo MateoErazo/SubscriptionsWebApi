@@ -164,6 +164,7 @@ namespace SubscriptionsWebApi
       });
 
       services.AddScoped<KeysService>();
+      services.AddHostedService<InvoicesHostedService>();
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogger<Startup> logger)
